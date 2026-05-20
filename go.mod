@@ -9,12 +9,12 @@ require (
 	github.com/die-net/lrucache v0.0.0-20220628165024-20a71bc65bf1
 	github.com/disintegration/imaging v1.6.2
 	github.com/fcjr/aia-transport-go v1.2.2
-	github.com/gomodule/redigo v1.9.2
 	github.com/google/uuid v1.6.0
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
 	github.com/muesli/smartcrop v0.3.0
 	github.com/peterbourgon/diskv v0.0.0-20171120014656-2973218375c3
 	github.com/prometheus/client_golang v1.22.0
+	github.com/redis/go-redis/v9 v9.19.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	golang.org/x/image v0.43.0
 	willnorris.com/go/gifresize v1.0.0
@@ -72,6 +72,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect

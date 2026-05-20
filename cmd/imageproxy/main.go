@@ -19,12 +19,12 @@ import (
 	"github.com/PaulARoy/azurestoragecache"
 	"github.com/die-net/lrucache"
 	"github.com/die-net/lrucache/twotier"
-	"github.com/gomodule/redigo/redis"
 	"github.com/gregjones/httpcache/diskcache"
-	rediscache "github.com/gregjones/httpcache/redis"
 	"github.com/peterbourgon/diskv"
 	"willnorris.com/go/imageproxy"
 	"willnorris.com/go/imageproxy/internal/gcscache"
+	"willnorris.com/go/imageproxy/internal/must"
+	"willnorris.com/go/imageproxy/internal/rediscache"
 	"willnorris.com/go/imageproxy/internal/s3cache"
 	"willnorris.com/go/imageproxy/third_party/envy"
 )
@@ -196,11 +196,14 @@ func parseCache(c string) (imageproxy.Cache, error) {
 	case "memory":
 		return lruCache(u.Opaque)
 	case "redis":
-		conn, err := redis.DialURL(u.String(), redis.DialPassword(os.Getenv("REDIS_PASSWORD")))
+		client, err := rediscache.NewSingleClient(u.String())
 		if err != nil {
 			return nil, err
 		}
-		return rediscache.NewWithClient(conn), nil
+		return rediscache.NewRedisCache(client,
+			rediscache.WithExpiration(must.Do(time.ParseDuration(getEnvOrDefault("REDIS_EXPIRATION_DURATION", "0s")))),
+			rediscache.WithJitter(must.Do(time.ParseDuration(getEnvOrDefault("REDIS_EXPIRATION_JITTER_DURATION", "0s")))),
+		), nil
 	case "s3":
 		return s3cache.New(u.String())
 	case "file":
@@ -238,4 +241,12 @@ func diskCache(path string) *diskcache.Cache {
 		Transform: func(s string) []string { return []string{s[0:2], s[2:4]} },
 	})
 	return diskcache.NewWithDiskv(d)
+}
+
+func getEnvOrDefault(name, def string) string {
+	env := os.Getenv(name)
+	if env != "" {
+		return env
+	}
+	return def
 }

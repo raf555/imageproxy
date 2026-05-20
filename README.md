@@ -173,11 +173,19 @@ enabled using the `-cache` flag. It supports the following values:
 - azure URL (e.g. `azure://container-name/`) - will cache images on
   Azure Storage. This requires `AZURESTORAGE_ACCOUNT_NAME` and
   `AZURESTORAGE_ACCESS_KEY` environment variables to bet set.
-- redis URL (e.g. `redis://hostname/`) - will cache images on
+- redis URL (e.g. `redis://:password@hostname/`) - will cache images on
   the specified redis host. The full URL syntax is defined by the [redis URI
   registration](https://www.iana.org/assignments/uri-schemes/prov/redis).
-  Rather than specify password in the URI, use the `REDIS_PASSWORD`
-  environment variable.
+  The password, if required, should be included directly in the URI.
+
+  Two optional environment variables control cache expiration:
+
+  - `REDIS_EXPIRATION_DURATION` - duration after which cached entries expire
+    (e.g. `24h`, `30m`). Defaults to `0s` (no expiration).
+  - `REDIS_EXPIRATION_JITTER_DURATION` - maximum random duration added on top of
+    the expiration to spread out cache invalidations (e.g. `5m` adds a random
+    value between 0 and 5 minutes). Only applies when `REDIS_EXPIRATION_DURATION`
+    is set. Defaults to `0s`.
 
 For example, to cache files on disk in the `/tmp/imageproxy` directory:
 
